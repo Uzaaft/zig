@@ -142,34 +142,40 @@ find_package(clang 19)
 find_package(lld 19)
 
 if(ZIG_STATIC_ZLIB)
-    if (MSVC)
-        list(REMOVE_ITEM LLVM_LIBRARIES "z.lib")
-    else()
-        list(REMOVE_ITEM LLVM_LIBRARIES "-lz")
-    endif()
+    if("-lz" IN_LIST LLVM_LIBRARIES)
+        if (MSVC)
+            list(REMOVE_ITEM LLVM_LIBRARIES "z.lib")
+        else()
+            list(REMOVE_ITEM LLVM_LIBRARIES "-lz")
+        endif()
 
-    find_library(ZLIB NAMES libz.a libzlibstatic.a z zlib libz NAMES_PER_DIR)
-    list(APPEND LLVM_LIBRARIES "${ZLIB}")
+        find_library(ZLIB NAMES libz.a libzlibstatic.a z zlib libz NAMES_PER_DIR)
+        list(APPEND LLVM_LIBRARIES "${ZLIB}")
+    endif()
 endif()
 
 if(ZIG_STATIC_ZSTD)
-    if (MSVC)
-        list(REMOVE_ITEM LLVM_LIBRARIES "zstd.lib")
-    else()
-        list(REMOVE_ITEM LLVM_LIBRARIES "-lzstd")
-    endif()
+    if("-lzstd" IN_LIST LLVM_LIBRARIES)
+        if (MSVC)
+            list(REMOVE_ITEM LLVM_LIBRARIES "zstd.lib")
+        else()
+            list(REMOVE_ITEM LLVM_LIBRARIES "-lzstd")
+        endif()
 
-    find_library(ZSTD NAMES libzstd.a libzstdstatic.a zstd NAMES_PER_DIR)
-    list(APPEND LLVM_LIBRARIES "${ZSTD}")
+        find_library(ZSTD NAMES libzstd.a libzstdstatic.a zstd NAMES_PER_DIR)
+        list(APPEND LLVM_LIBRARIES "${ZSTD}")
+    endif()
 endif()
 
 if(ZIG_STATIC_CURSES)
-    list(REMOVE_ITEM LLVM_LIBRARIES "-lcurses")
-    find_library(CURSES NAMES libcurses.a libncurses.a NAMES_PER_DIR
-      PATHS
-        /usr/local/opt/ncurses/lib
-        /opt/homebrew/opt/ncurses/lib)
-    list(APPEND LLVM_LIBRARIES "${CURSES}")
+    if("-lcurses" IN_LIST LLVM_LIBRARIES)
+        list(REMOVE_ITEM LLVM_LIBRARIES "-lcurses")
+        find_library(CURSES NAMES libcurses.a libncurses.a NAMES_PER_DIR
+          PATHS
+            /usr/local/opt/ncurses/lib
+            /opt/homebrew/opt/ncurses/lib)
+        list(APPEND LLVM_LIBRARIES "${CURSES}")
+    endif()
 endif()
 
 find_package(Threads)
